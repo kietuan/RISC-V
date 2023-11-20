@@ -2,11 +2,5 @@
 
 ## Vector instructions
 The vector extension of RV32 is being draft.  
-We don't implement the Floating-point version for both vector and scalar instructions.
 
-![](docs/2023-11-19-15-53-20.png)  
-*The vector instructions that I implemented. All are R-type.  
-Source: **Computer Architecture: A Quantitative Approach, 6th edition***
-
-Our vector architecture supports *dynamic register typing*.  
-Dynamic register typing lets programs disable unused vector registers.
+Our Vector architecture follows the [Vector Extension 1.0](https://github.com/riscv/riscv-v-spec/releases/tag/v1.0) standard, which is considered frozen for public review as part of the RISC-V International ratification process.
