@@ -258,7 +258,8 @@ module DATA_PATH
         new_vstart          = vstart;
         new_vill            = vill;
         new_vsew            = vsew;
-        vlmul               = new_vlmul;
+        new_vlmul           = vlmul;
+        new_masks           = masks;
 
         case (opcode)
             7'b0110011: 
