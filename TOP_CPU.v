@@ -26,19 +26,13 @@ module RSICV_CPU
     wire [31:0]REG_write_value, REG_rs1_data, REG_rs1_data;
 
     
-    wire [`VLEN * 32 - 1 : 0] new_v_regs ;
-    wire [31:0] new_vl;
-    wire [31:0] new_vstart;
-    wire        new_vill;
-    wire [2:0]  new_vsew;
-    wire [2:0]  new_vlmul;
-
-    wire [`VLEN * 32 - 1 : 0] v_regs; 
-    wire [31 : 0]             vl; //hold the number of elements to be updated -> index the last element
-    wire [31 : 0]             vstart; //index the first element
-    wire                      vill; // illigal if attempt to set invalid value to vetype
-    wire [2:0]                vsew;
-    wire [2:0]                vlmul;
+    wire [`VLEN * 32 - 1 : 0] v_regs, new_v_regs ;
+    wire [31:0] vl, new_vl ;
+    wire [31:0] vstart, new_vstart;
+    wire        vill, new_vill;
+    wire [2:0]  vsew, new_vsew;
+    wire [2:0]  vlmul, new_vlmul;
+    wire [`VLEN - 1 : 0]      masks, new_masks;
     wire [31:0]               element_width;
 
 
@@ -97,6 +91,7 @@ module RSICV_CPU
         .new_vill       (new_vill),
         .new_vsew       (new_vsew),
         .new_vlmul      (new_vlmul),
+        .new_masks      (new_masks),
 
         //OUTPUT
         .v_regs         (v_regs), //cannot, we can't assign to all, mux index by address
@@ -105,7 +100,8 @@ module RSICV_CPU
         .vill           (vill), // illigal if attempt to set invalid value to vetype
         .vsew           (vsew),
         .vlmul          (vlmul),
-        .element_width  (element_width)
+        .element_width  (element_width),
+        .masks          (masks)
     );
 
     DATA_PATH DATA_PATH
@@ -123,6 +119,7 @@ module RSICV_CPU
         .vsew(vsew),
         .vlmul(vlmul),
         .element_width(element_width),
+        .masks(masks),
 
         //OUTPUT
         .new_PC             (new_PC),
@@ -146,6 +143,7 @@ module RSICV_CPU
         .new_vill(new_vill),
         .new_vsew(new_vsew),
         .new_vlmul(new_vlmul),
+        .new_masks(new_masks)
     );    
 endmodule;
 
@@ -159,14 +157,14 @@ module DATA_PATH
     input [31:0] PC,
 
     //vector update
-    input [`VLEN * 32 - 1 : 0] v_regs; 
-    input [31 : 0]             vl; //hold the number of elements to be updated -> index the last element
-    input [31 : 0]             vstart; //index the first element
-    input                      vill; // illigal if attempt to set invalid value to vetype
-    input [2:0]                vsew;
-    input [2:0]                vlmul;
-    input [31:0]               element_width;
- 
+    input [`VLEN * 32 - 1 : 0] v_regs, 
+    input [31 : 0]             vl, //hold the number of elements to be updated -> index the last element
+    input [31 : 0]             vstart, //index the first element
+    input                      vill, // illigal if attempt to set invalid value to vetype
+    input [2:0]                vsew,
+    input [2:0]                vlmul,
+    input [31:0]               element_width,
+    input [`VLEN - 1 : 0]      masks,
 
     output reg [31:0] new_PC,
     output reg [31:0] REG_write_value,
@@ -183,12 +181,13 @@ module DATA_PATH
     output wire [4:0] rs2,
 
     //vector update
-    output wire [`VLEN * 32 - 1 : 0] new_v_regs ;
-    output reg [31:0] new_vl;
-    output reg [31:0] new_vstart;
-    output reg        new_vill;
-    output reg [2:0]  new_vsew;
-    output reg [2:0]  new_vlmul;
+    output wire [`VLEN * 32 - 1 : 0] new_v_regs ,
+    output reg [31:0] new_vl,
+    output reg [31:0] new_vstart,
+    output reg        new_vill,
+    output reg [2:0]  new_vsew,
+    output reg [2:0]  new_vlmul,
+    output reg [`VLEN - 1 : 0] new_masks
 );
 
     wire [6:0] opcode   = instruction [6:0];
@@ -229,8 +228,8 @@ module DATA_PATH
     generate
         for (i = 0; i <= 31; i = i + 1)
         begin: vector_assign
-            assign vector_register[i]                                  = v_regs [(i * `VLEN) + (`VLEN - 1) : (i * `VLEN)];
-            assign new_v_regs[(i * `VLEN) + (`VLEN - 1) : (i * `VLEN)] = new_vector_register[i];
+            assign vector_register[i]               = v_regs [(i * `VLEN) +: `VLEN];
+            assign new_v_regs[(i * `VLEN) +: `VLEN] = new_vector_register[i];
         end
     endgenerate
 

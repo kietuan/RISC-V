@@ -8,10 +8,10 @@ module VECTOR_REGISTER_FILE
     input        new_vill,
     input [2:0]  new_vsew,
     input [2:0]  new_vlmul,
-    input [`VLEN - 1 : 0] new_mask_registers,
+    input [`VLEN - 1 : 0] new_masks,
 
     output reg [`VLEN * 32 - 1 : 0] v_regs, //cannot, we can't assign to all, mux index by address
-    output reg [`VLEN - 1 : 0]  mask_registers,
+    output reg [`VLEN - 1 : 0]  masks,
     // control registers
     output reg [31 : 0]          vl, //hold the number of elements to be updated -> index the last element
     output reg [31 : 0]          vstart, //index the first element
@@ -32,7 +32,7 @@ module VECTOR_REGISTER_FILE
             vstart  <= 0;
             v_regs <= 0;
             for (i = 0; i < `VLEN ; i = i + 1)
-                mask_registers[i] <= 1;
+                masks[i] <= 1;
         end
 
         else
@@ -43,6 +43,7 @@ module VECTOR_REGISTER_FILE
             vill   <= new_vill;
             vsew   <= new_vsew;
             vlmul  <= new_vlmul;
+            masks <= new_masks;
         end
     end
 
