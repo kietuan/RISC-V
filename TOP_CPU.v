@@ -93,6 +93,43 @@ module RSICV_CPU
         .rs1                (rs1),
         .rs2                (rs2)
     );
+
+    wire [`VLEN * 32 - 1 : 0] v_regs;
+    wire  [`VLEN * 32 - 1 : 0] new_v_regs;
+
+    VECTOR_REGISTER_FILE VECTOR_REGISTER_FILE
+    (
+        .new_v_regs(new_v_regs),
+        .v_regs(v_regs)
+    );
+    
+    reg   [(`VLEN - 1) : 0]    new_vector_register [0 : 31];
+    wire  [(`VLEN - 1) : 0]    vector_register     [0 : 31];
+    
+    genvar i;
+    generate
+        for (i = 0; i <= 31; i = i + 1)
+        begin: vector_assign
+            assign vector_register[i] = v_regs [(i * `VLEN) + (`VLEN - 1) : (i * `VLEN)];
+            assign new_v_regs[(i * `VLEN) + (`VLEN - 1) : (i * `VLEN)] = new_vector_register[i];
+        end
+    endgenerate
+
+    /*
+    reg [(`VLEN - 1) : 0] vector_register [0 : 31];
+    always @(v_regs) 
+    begin
+        for (i = 0; i <= 31; i = i + 1)
+            
+    end
+
+    always @(new_vector_register)
+    // always @(*)
+    begin
+        for (i = 0; i <= 31; i = i + 1)
+            new_v_regs[(i * `VLEN) + (`VLEN - 1) : (i * `VLEN)] = new_vector_register[i];
+    end
+    */
 endmodule;
 
 
