@@ -4,7 +4,6 @@ module VECTOR_REGISTER_FILE
     input SYS_reset, SYS_clk,
     input [`VLEN * 32 - 1 : 0] new_v_regs ,
     input [31:0] new_vl,
-    input [31:0] new_vstart,
     input        new_vill,
     input [2:0]  new_vsew,
     input [2:0]  new_vlmul,
@@ -29,7 +28,6 @@ module VECTOR_REGISTER_FILE
             vsew    <= 0;
             vlmul   <= 0;
             vl      <= 0;
-            vstart  <= 0;
             v_regs <= 0;
             for (i = 0; i < `VLEN ; i = i + 1)
                 masks[i] <= 1;
@@ -39,7 +37,6 @@ module VECTOR_REGISTER_FILE
         begin
             v_regs <= new_v_regs ;
             vl     <= new_vl;
-            vstart <= new_vstart;
             vill   <= new_vill;
             vsew   <= new_vsew;
             vlmul  <= new_vlmul;

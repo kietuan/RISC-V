@@ -28,7 +28,6 @@ module RSICV_CPU
     
     wire [`VLEN * 32 - 1 : 0] v_regs, new_v_regs ;
     wire [31:0] vl, new_vl ;
-    wire [31:0] vstart, new_vstart;
     wire        vill, new_vill;
     wire [2:0]  vsew, new_vsew;
     wire [2:0]  vlmul, new_vlmul;
@@ -87,7 +86,6 @@ module RSICV_CPU
         //INPUT, i.e. next value
         .new_v_regs     (new_v_regs) ,
         .new_vl         (new_vl),
-        .new_vstart     (new_vstart),
         .new_vill       (new_vill),
         .new_vsew       (new_vsew),
         .new_vlmul      (new_vlmul),
@@ -96,7 +94,6 @@ module RSICV_CPU
         //OUTPUT
         .v_regs         (v_regs), //cannot, we can't assign to all, mux index by address
         .vl             (vl), //hold the number of elements to be updated -> index the last element
-        .vstart         (vstart), //index the first element
         .vill           (vill), // illigal if attempt to set invalid value to vetype
         .vsew           (vsew),
         .vlmul          (vlmul),
@@ -114,7 +111,6 @@ module RSICV_CPU
         .PC                 (PC),
         .v_regs(v_regs),
         .vl(vl),
-        .vstart(vstart),
         .vill(vill),
         .vsew(vsew),
         .vlmul(vlmul),
@@ -139,7 +135,6 @@ module RSICV_CPU
 
         .new_v_regs(new_v_regs),
         .new_vl(new_vl),
-        .new_vstart(new_vstart),
         .new_vill(new_vill),
         .new_vsew(new_vsew),
         .new_vlmul(new_vlmul),
@@ -159,7 +154,6 @@ module DATA_PATH
     //vector update
     input [`VLEN * 32 - 1 : 0] v_regs, 
     input [31 : 0]             vl, //hold the number of elements to be updated -> index the last element
-    input [31 : 0]             vstart, //index the first element
     input                      vill, // illigal if attempt to set invalid value to vetype
     input [2:0]                vsew,
     input [2:0]                vlmul,
@@ -183,7 +177,6 @@ module DATA_PATH
     //vector update
     output wire [`VLEN * 32 - 1 : 0] new_v_regs ,
     output reg [31:0] new_vl,
-    output reg [31:0] new_vstart,
     output reg        new_vill,
     output reg [2:0]  new_vsew,
     output reg [2:0]  new_vlmul,
@@ -236,7 +229,7 @@ module DATA_PATH
     endgenerate
 
     integer k;
-    always @(instruction, REG_rs1_data, REG_rs2_data, MEM_read_data, PC, v_regs, vl, vstart, vill, vsew, vsew, vlmul, element_width) // all the input
+    always @(instruction, REG_rs1_data, REG_rs2_data, MEM_read_data, PC, v_regs, vl, vill, vsew, vsew, vlmul, element_width) // all the input
     begin
         //set the default, also prevent latch
         new_PC              = PC + 4;
@@ -256,7 +249,6 @@ module DATA_PATH
         
         
         new_vl              = vl;
-        new_vstart          = vstart;
         new_vill            = vill;
         new_vsew            = vsew;
         new_vlmul           = vlmul;
@@ -452,7 +444,7 @@ module DATA_PATH
 
                         new_vill = 0;
 
-                        
+
                     end
                     
                     // else if (instruction[30:25] == 0) //vsetvl
