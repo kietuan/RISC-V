@@ -221,6 +221,8 @@ module DATA_PATH
 
     reg branch_taken;
 
+    reg [31:0] vlmax;
+
     reg   [(`VLEN - 1) : 0]    new_vector_register [0 : 31];
     wire  [(`VLEN - 1) : 0]    vector_register     [0 : 31];
 
@@ -250,9 +252,8 @@ module DATA_PATH
         invalid_instruction = 0;
 
         for (k = 0; k <= 31; k = k+1)
-        begin
             new_vector_register[k] = vector_register[k];
-        end
+        
         
         new_vl              = vl;
         new_vstart          = vstart;
@@ -260,6 +261,9 @@ module DATA_PATH
         new_vsew            = vsew;
         new_vlmul           = vlmul;
         new_masks           = masks;
+
+        vlmax = `VLEN / element_width; 
+        
 
         case (opcode)
             7'b0110011: 
@@ -378,23 +382,83 @@ module DATA_PATH
                 endcase
             end
             7'b1010111: //vector configuration
-            begin
+            begin   //tự hiện thực, đặt vtype = zimm
                 if (instruction[2:0] == 3'b111)
                 begin
                     if (instruction[31] == 0)   //vsetvli
                     begin
+                        new_vlmul = zimm11[2:0];
+                        new_vsew = zimm11 [5:3];
+                        if  (new_vsew > 3'b010)
+                            new_vsew = 3'b010;
+
+                        if      (new_vlmul == 3'b000)
+                            vlmax = `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b001)
+                            vlmax = 2 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b010)
+                            vlmax = 4 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b011)
+                            vlmax = 8 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b101)
+                            vlmax = `VLEN / 8 / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b110)
+                            vlmax = `VLEN / 4 / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b111)
+                            vlmax = `VLEN / 2 / (2 ** (new_vsew + 3)); 
+                            
+                        REG_write_enable = 1;
+                        REG_write_address= rd;
+                        if (REG_rs1_data <= vlmax)
+                            new_vl = REG_rs1_data;
+                        else
+                            new_vl = vlmax;
                         
+                        REG_write_value = new_vl;
+
+                        new_vill = 0;
                     end
                     
                     else if (instruction [30] == 1)//vsetivli
                     begin
+                        new_vlmul = zimm11[2:0];
+                        new_vsew = zimm11 [5:3];
+                        if  (new_vsew > 3'b010)
+                            new_vsew = 3'b010;
+
+                        if      (new_vlmul == 3'b000)
+                            vlmax = `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b001)
+                            vlmax = 2 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b010)
+                            vlmax = 4 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b011)
+                            vlmax = 8 * `VLEN / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b101)
+                            vlmax = `VLEN / 8 / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b110)
+                            vlmax = `VLEN / 4 / (2 ** (new_vsew + 3)); 
+                        else if (new_vlmul == 3'b111)
+                            vlmax = `VLEN / 2 / (2 ** (new_vsew + 3)); 
+
+                        REG_write_enable = 1;
+                        REG_write_address= rd;
+                        if (uimm <= vlmax)
+                            new_vl = uimm;
+                        else
+                            new_vl = vlmax;
+
+                        REG_write_value = new_vl;
+
+                        new_vill = 0;
+
                         
                     end
                     
-                    else if (instruction[30:25] == 0) //vsetvl
-                    begin
+                    // else if (instruction[30:25] == 0) //vsetvl
+                    // begin
                       
-                    end
+                    // end
 
                     else invalid_instruction = 1;
                 end
