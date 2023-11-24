@@ -14,12 +14,13 @@ module RSICV_CPU
     wire [31:0] instruction;
     wire [31:0] new_PC; //need to choose
 
-    wire [0:0]  MEM_write_enable;
+    wire [1:0]  MEM_write_length;
+    wire [1:0]  MEM_read_length;
+    wire        MEM_read_signed;
     wire [31:0] MEM_write_data;
     wire [31:0] MEM_write_address;
     wire [31:0] MEM_read_address;
     wire [31:0] MEM_read_data;
-    wire [31:0] instruction_address;
 
     wire [4:0] rs1, rs2, REG_write_address;
     wire [0:0] REG_write_enable;
@@ -35,13 +36,15 @@ module RSICV_CPU
             PC <= new_PC;
     end
 
-    MAIN_MEMORY main_memory //the block hold the insrtuciton and data. It can be read every time and written at the clock. once
+    MEMORY main_memory //the block hold the insrtuciton and data. It can be read every time and written at the clock. once
     (
         .SYS_clk            (SYS_clk),
         .SYS_reset          (SYS_reset),
-        .instruction_address(PC),
+        .PC                 (PC),
         //INPUT
-        .MEM_write_enable  (MEM_write_enable),
+        .MEM_write_length  (MEM_write_length),
+        .MEM_read_length   (MEM_read_length),
+        .MEM_read_signed   (MEM_read_signed),
         .MEM_write_data    (MEM_write_data),
         .MEM_write_address (MEM_write_address),
         .MEM_read_address  (MEM_read_address),
@@ -83,7 +86,9 @@ module RSICV_CPU
         .REG_write_enable   (REG_write_enable),
         .REG_write_address  (REG_write_address),
 
-        .MEM_write_enable   (MEM_write_enable),
+        .MEM_write_length  (MEM_write_length),
+        .MEM_read_length   (MEM_read_length),
+        .MEM_read_signed   (MEM_read_signed),
         .MEM_write_data     (MEM_write_data),
         .MEM_write_address  (MEM_write_address),
 
@@ -110,7 +115,9 @@ module DATA_PATH
     output reg [0:0]  REG_write_enable,
     output reg [4:0]  REG_write_address,
     
-    output reg [0:0]  MEM_write_enable,
+    output reg [1:0]  MEM_write_length,
+    output reg [1:0]  MEM_read_length,
+    output reg        MEM_read_signed,
     output reg [31:0] MEM_write_data,
     output reg [31:0] MEM_write_address,
 
@@ -141,7 +148,9 @@ module DATA_PATH
         REG_write_value     = 0;
         REG_write_enable    = 0;
         REG_write_address   = 0;
-        MEM_write_enable    = 0;
+        MEM_write_length    = 0;
+        MEM_read_length     = 2'b11;
+        MEM_read_signed     = 0;
         MEM_write_data      = 0;
         MEM_write_address   = 0;
         MEM_read_address    = 0;
@@ -200,12 +209,59 @@ module DATA_PATH
                 endcase
             end
 
-            7'b0000011: //I - load only
+            7'b0000011: //I - loads
             begin
                 REG_write_enable = 1;
                 REG_write_address= rd;
+
+                case (funct3)
+                    3'b010: MEM_read_length  = 2'b11; //lw
+                    
+                    3'b000: //lb
+                    begin
+                        MEM_read_length = 2'b01;
+                        MEM_read_signed = 1;
+                    end
+
+                    3'b001: //lh
+                    begin
+                        MEM_read_length = 2'b10;
+                        MEM_read_signed = 1;
+                    end
+
+                    3'b100: //lbu
+                    begin
+                        MEM_read_length = 2'b01;
+                        MEM_read_signed = 0;
+                    end
+
+                    3'b101: //lhu
+                    begin
+                        MEM_read_length = 2'b10;
+                        MEM_read_signed = 0;
+                    end
+
+                    default: MEM_read_length  = 2'b11;
+                endcase
+
                 MEM_read_address = REG_rs1_data + $signed(I_immed); // go to change the mem read value...
                 REG_write_data = MEM_read_data;
+            end
+
+            7'b0100011:
+            begin
+                case (funct3)
+                    3'b000: MEM_write_length = 2'b01;
+
+                    3'b001: MEM_write_length = 2'b10;
+
+                    3'b010: MEM_write_length = 2'b11;
+
+                    default: MEM_write_length = 0;
+                endcase
+
+                MEM_write_data      = REG_rs2_data;
+                MEM_write_address   = REG_rs1_data + $signed(I_immed);
             end
 
             7'b1100111: //I- jalr only
@@ -245,7 +301,7 @@ module DATA_PATH
         if (invalid_instruction == 1)
         begin
             REG_write_enable    = 0;
-            MEM_write_enable    = 0;
+            // MEM_write_enable    = 0;
             branch_taken        = 0;
             new_PC              = PC + 4;
         end
