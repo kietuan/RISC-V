@@ -3,7 +3,7 @@
 module RSICV_CPU
 (
     input wire  [0:0] SYS_clk,
-    input wire  [0:0] SYS_reset,
+    input wire  [0:0] SYS_reset
 
     //TODO: Kieungan, what is RAM being implemented?
 );
@@ -24,7 +24,7 @@ module RSICV_CPU
 
     wire [4:0] rs1, rs2, REG_write_address;
     wire [0:0] REG_write_enable;
-    wire [31:0]REG_write_value, REG_rs1_data, REG_rs1_data;
+    wire [31:0]REG_write_value, REG_rs1_data, REG_rs2_data;
 
     always @(posedge SYS_clk)
     begin
@@ -98,7 +98,7 @@ module RSICV_CPU
         .rs1                (rs1),
         .rs2                (rs2)
     );
-endmodule;
+endmodule
 
 
 module DATA_PATH
@@ -176,10 +176,10 @@ module DATA_PATH
                     10'b0100000_101: REG_write_value = REG_rs1_data >>> REG_rs2_data;//sra
                     10'b0000000_110: REG_write_value = REG_rs1_data | REG_rs2_data;//or
                     10'b0000000_111: REG_write_value = REG_rs1_data & REG_rs2_data;//and
-                    10'b0000001_000: REG_write_value = ($signed(REG_rs1_data) * $signed(REG_rs2_data)) [31:0];//mul, treat them as signed and put the LOWER in result
-                    10'b0000001_001: REG_write_value = ($signed(REG_rs1_data) * $signed(REG_rs2_data)) [63:32];//mulh
-                    10'b0000001_010: REG_write_value = ($signed(REG_rs1_data) * $unsigned(REG_rs2_data)) [63:32];//mulhsu
-                    10'b0000001_011: REG_write_value = ($unsigned(REG_rs1_data) * $unsigned(REG_rs2_data)) [63:32];//mulhu
+                    10'b0000001_000: REG_write_value = ($signed(REG_rs1_data) * $signed(REG_rs2_data));//mul, treat them as signed and put the LOWER in result
+                    10'b0000001_001: REG_write_value = ($signed(REG_rs1_data) * $signed(REG_rs2_data)) >>> 32;//mulh
+                    10'b0000001_010: REG_write_value = ($signed(REG_rs1_data) * $unsigned(REG_rs2_data)) >>> 32;//mulhsu
+                    10'b0000001_011: REG_write_value = ($unsigned(REG_rs1_data) * $unsigned(REG_rs2_data)) >> 32;//mulhu
                     10'b0000001_100: REG_write_value = ($signed(REG_rs1_data) / $signed(REG_rs2_data));//div
                     10'b0000001_101: REG_write_value = ($unsigned(REG_rs1_data) / $unsigned(REG_rs2_data));//divu
                     10'b0000001_110: REG_write_value = ($signed(REG_rs1_data) % $signed(REG_rs2_data));//rem
@@ -245,7 +245,7 @@ module DATA_PATH
                 endcase
 
                 MEM_read_address = REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed}); // go to change the mem read value...
-                REG_write_data = MEM_read_data;
+                REG_write_value = MEM_read_data;
             end
 
             7'b0100011:

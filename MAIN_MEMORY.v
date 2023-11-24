@@ -16,7 +16,7 @@ module MEMORY
     output reg [31:0] MEM_read_data,
     output wire [31:0] instruction
 );
-    reg [7:0] data [0 : 32'hFFFF_FFFF]
+    reg [7:0] data [0 : 32'hFFFF_FFFF];
 
     assign instruction[31:0] = {data[PC+3],data[PC+2], data[PC+1], data[PC]};
 
@@ -29,7 +29,7 @@ module MEMORY
             if (MEM_read_signed)
                 MEM_read_data = { {24{data[MEM_read_address][7]}}  , data[MEM_read_address]};
             else 
-                MEM_read_data = { {24{0}}  , data[MEM_read_address]};
+                MEM_read_data = { {24{1'b0}}  , data[MEM_read_address]};
         end
 
         else if (MEM_read_length == 2'b10)
@@ -37,7 +37,7 @@ module MEMORY
             if (MEM_read_signed)
                 MEM_read_data = { {16{data[MEM_read_address + 1][7]}}  , data[MEM_read_address+1], data[MEM_read_address]};
             else 
-                MEM_read_data = { {16{0}}  ,                             data[MEM_read_address+1], data[MEM_read_address]};
+                MEM_read_data = { {16{1'b0}}  ,                             data[MEM_read_address+1], data[MEM_read_address]};
         end
     end
 

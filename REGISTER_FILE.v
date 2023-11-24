@@ -21,7 +21,7 @@ module REGISTER_FILE(
     assign REG_rs1_data = register[rs1];
     assign REG_rs2_data = register[rs2];
 
-    always @(posedge clk)
+    always @(posedge SYS_clk)
     begin 
         if (SYS_reset)
         begin
