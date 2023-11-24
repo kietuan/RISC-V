@@ -194,12 +194,12 @@ module DATA_PATH
                 REG_write_address= rd;
 
                 case (funct3)
-                    3'b000: REG_write_value = $signed(REG_rs1_data) + $signed(I_immed);
-                    3'b010: REG_write_value = $signed(REG_rs1_data) < $signed(I_immed);
-                    3'b011: REG_write_value = $unsigned(REG_rs1_data) < $unsigned(I_immed);
-                    3'b100: REG_write_value = $unsigned(REG_rs1_data) ^ $unsigned(I_immed);
-                    3'b110: REG_write_value = $unsigned(REG_rs1_data) | $unsigned(I_immed);
-                    3'b111: REG_write_value = $unsigned(REG_rs1_data) & $unsigned(I_immed);
+                    3'b000: REG_write_value = $signed(REG_rs1_data) + $signed({{20{I_immed[11]}} ,I_immed});
+                    3'b010: REG_write_value = $signed(REG_rs1_data) < $signed({{20{I_immed[11]}} ,I_immed});
+                    3'b011: REG_write_value = $unsigned(REG_rs1_data) < $unsigned({{20{0}} ,I_immed});
+                    3'b100: REG_write_value = $unsigned(REG_rs1_data) ^ $unsigned({{20{0}} ,I_immed});
+                    3'b110: REG_write_value = $unsigned(REG_rs1_data) | $unsigned({{20{0}} ,I_immed});
+                    3'b111: REG_write_value = $unsigned(REG_rs1_data) & $unsigned({{20{0}} ,I_immed});
                     3'b001: REG_write_value = REG_rs1_data << shamt;
                     3'b101: if (funct7 == 7'd0) 
                                 REG_write_value = REG_rs1_data >> shamt;
@@ -244,7 +244,7 @@ module DATA_PATH
                     default: MEM_read_length  = 2'b11;
                 endcase
 
-                MEM_read_address = REG_rs1_data + $signed(I_immed); // go to change the mem read value...
+                MEM_read_address = REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed}); // go to change the mem read value...
                 REG_write_data = MEM_read_data;
             end
 
@@ -261,7 +261,7 @@ module DATA_PATH
                 endcase
 
                 MEM_write_data      = REG_rs2_data;
-                MEM_write_address   = REG_rs1_data + $signed(I_immed);
+                MEM_write_address   = REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed});
             end
 
             7'b1100111: //I- jalr only
@@ -269,7 +269,7 @@ module DATA_PATH
                 REG_write_enable = 1;
                 REG_write_address= rd;
                 REG_write_value  = PC + 4;
-                new_PC           = (REG_rs1_data + $signed(I_immed)) << 1 ;
+                new_PC           = (REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed})) << 1 ;
             end
 
             7'b1101111: // J jal only
@@ -277,7 +277,7 @@ module DATA_PATH
                 REG_write_enable = 1;
                 REG_write_address= rd;
                 REG_write_value  = PC + 4;
-                new_PC           = PC + $signed(J_immed << 1);
+                new_PC           = PC + $signed({ {12{J_immed[20]}} , J_immed} << 1);
             end
 
             7'b1100011: //B-type
@@ -292,7 +292,7 @@ module DATA_PATH
                     default: invalid_instruction = 1;
                 endcase
 
-                if (branch_taken) new_PC = PC + $signed(B_immed << 1);
+                if (branch_taken) new_PC = PC + $signed({{20{B_immed[12]}}, B_immed} << 1);
             end
 
             default: invalid_instruction = 1;
@@ -301,7 +301,6 @@ module DATA_PATH
         if (invalid_instruction == 1)
         begin
             REG_write_enable    = 0;
-            // MEM_write_enable    = 0;
             branch_taken        = 0;
             new_PC              = PC + 4;
         end
