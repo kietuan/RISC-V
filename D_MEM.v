@@ -12,7 +12,7 @@ module DATA_MEMORY
 
     input wire [31:0]  MEM_read_address,
 
-    output reg [31:0] MEM_read_data,
+    output reg [31:0] MEM_read_data
 );
     always @(*) 
     begin
