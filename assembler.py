@@ -1,5 +1,5 @@
 from riscv_assembler.convert import AssemblyConverter as AC
-from os import remove
+import os
 
 def remove_2first_chars(filename):
     with open(filename, 'r') as file:
@@ -22,4 +22,6 @@ convert("main.s", "input_text.txt")
 # Call the function with the name of your file
 remove_2first_chars("input_text.txt")
 
-remove ("input_text.txt")
+os.remove ("input_text.txt")
+
+os.rename("new_input_text.txt", "input_text.txt")
