@@ -40,8 +40,8 @@ module RSICV_CPU ();
 
     initial
     begin 
-        test_register = 5;
-        $monitor("time = %d, value need to test = %d", $time, value_need_to_test);
+        test_register = 12;
+        $monitor("time = %d, register %d has value = %d", $time, test_register, value_need_to_test);
     end
 
 
