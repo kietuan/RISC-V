@@ -1,5 +1,5 @@
 `include "global.vh"
-module MEMORY
+module DATA_MEMORY
 (
     input wire [0:0] SYS_clk,
     input wire [0:0] SYS_reset,
@@ -11,15 +11,9 @@ module MEMORY
     input wire [31:0] MEM_write_address,
 
     input wire [31:0]  MEM_read_address,
-    input wire [31:0]  PC,
 
     output reg [31:0] MEM_read_data,
-    output wire [31:0] instruction
 );
-    reg [7:0] data [0 : 32'hFFFF_FFFF];
-
-    assign instruction[31:0] = {data[PC+3],data[PC+2], data[PC+1], data[PC]};
-
     always @(*) 
     begin
         MEM_read_data[31:0]   = {data[MEM_read_address+3],data[MEM_read_address+2], data[MEM_read_address+1], data[MEM_read_address]};
@@ -47,6 +41,7 @@ module MEMORY
         if (SYS_reset)
         begin
             //TODO Kieungan: initialize the memory in the start of
+            $readmemh("C:/Users/tuankiet/Desktop/MIPS CPU/input_data.txt", data);
         end
 
         else if (MEM_write_length == 2'b01) //store 1 byte

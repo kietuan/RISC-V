@@ -36,11 +36,10 @@ module RSICV_CPU
             PC <= new_PC;
     end
 
-    MEMORY main_memory //the block hold the insrtuciton and data. It can be read every time and written at the clock. once
+    DATA_MEMORY DMEM //the block hold the insrtuciton and data. It can be read every time and written at the clock. once
     (
         .SYS_clk            (SYS_clk),
         .SYS_reset          (SYS_reset),
-        .PC                 (PC),
         //INPUT
         .MEM_write_length  (MEM_write_length),
         .MEM_read_length   (MEM_read_length),
@@ -51,8 +50,19 @@ module RSICV_CPU
         
         //OUTPUT
         .MEM_read_data      (MEM_read_data),
+    );
+    
+    INS_MEMORY  IMEM
+    (
+        //INPUT
+        .SYS_clk            (SYS_clk),
+        .SYS_reset          (SYS_reset),
+        .PC                 (PC),  
+        
+        //OUTPUT
         .instruction        (instruction) //got the instruction
     );
+
 
 
 
