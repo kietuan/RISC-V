@@ -18,7 +18,7 @@ module INS_MEMORY
             begin
                 data[i] = 0;
             end
-            $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
+            $readmemh("C:/Users/tuankiet/Desktop/RISC-V/new_input_text.txt", data);
         end
     end
 
