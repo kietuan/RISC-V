@@ -1,5 +1,3 @@
-`include "global.vh"
-
 module RSICV_CPU
 (
     input wire  [0:0] SYS_clk,

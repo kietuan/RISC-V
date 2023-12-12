@@ -1,4 +1,3 @@
-`include "global.vh"
 module DATA_MEMORY
 (
     input wire [0:0] SYS_clk,
