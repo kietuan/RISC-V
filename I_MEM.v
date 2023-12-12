@@ -6,7 +6,7 @@ module INS_MEMORY
 
     output wire [31:0]  instruction
 );
-    reg [31:0] data [0 : 100000];
+    reg [31:0] data [0 : 1000];
     assign instruction[31:0] = data[PC];
 
     integer i;

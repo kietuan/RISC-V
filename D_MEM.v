@@ -14,6 +14,7 @@ module DATA_MEMORY
 
     output reg [31:0] MEM_read_data
 );
+    reg [7:0] data [0 : 1024];
     always @(*) 
     begin
         MEM_read_data[31:0]   = {data[MEM_read_address+3],data[MEM_read_address+2], data[MEM_read_address+1], data[MEM_read_address]};

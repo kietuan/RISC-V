@@ -49,7 +49,7 @@ module RSICV_CPU
         .MEM_read_address  (MEM_read_address),
         
         //OUTPUT
-        .MEM_read_data      (MEM_read_data),
+        .MEM_read_data      (MEM_read_data)
     );
     
     INS_MEMORY  IMEM
