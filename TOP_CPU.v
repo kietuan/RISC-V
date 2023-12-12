@@ -43,6 +43,7 @@ module RSICV_CPU ();
         $monitor("time = %d, register %d has value = %d, PC = %d, ins = %h, MEM_write_length = %d, MEM_write_data = %d, MEM_write_address = %d" , $time, test_register, value_need_to_test,PC, instruction, MEM_write_length, MEM_write_data, MEM_write_address);
     end
 
+    initial #20 $finish;
 
     always @(posedge SYS_clk)
     begin
