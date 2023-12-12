@@ -41,7 +41,7 @@ module DATA_MEMORY
         if (SYS_reset)
         begin
             //TODO Kieungan: initialize the memory in the start of
-            $readmemh("C:/Users/tuankiet/Desktop/MIPS CPU/input_data.txt", data);
+            $readmemh("C:/Users/tuankiet/Desktop/RISC-v/input_data.txt", data);
         end
 
         else if (MEM_write_length == 2'b01) //store 1 byte
