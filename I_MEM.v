@@ -7,7 +7,7 @@ module INS_MEMORY
     output wire [31:0]  instruction
 );
     reg [31:0] data [0 : 1000];
-    assign instruction[31:0] = data[PC];
+    assign instruction[31:0] = data[PC >> 2];
 
     integer i, file;
     always @(posedge SYS_clk) 
@@ -19,12 +19,8 @@ module INS_MEMORY
                 data[i] <= 0;
             end
 
-            // $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
-            file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", "r");
-            for (i = 0; i < 1000; i = i + 1) 
-            begin
-                $fscanf(file, "%h\n", data[i]);
-            end
+            $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
+
         end
     end
 
