@@ -1,8 +1,7 @@
-`include "global.vh"
-
-module RSICV_CPU();
-    reg [0:0] SYS_clk;
-    reg  [0:0] SYS_reset;
+module RSICV_CPU
+();
+    input wire  [0:0] SYS_clk,
+    input wire  [0:0] SYS_reset
 
     reg  [4:0]  test_register;
     wire [31:0] value_need_to_test;
