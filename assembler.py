@@ -15,7 +15,7 @@ def remove_2first_chars(filename):
 convert = AC(output_mode = 'f', nibble_mode = False, hex_mode = True)
 
 # Convert a whole .s file to text file
-convert("main.s", "input_text.txt")
+convert("program.s", "input_text.txt")
 
 
 
