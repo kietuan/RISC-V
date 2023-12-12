@@ -20,7 +20,7 @@ module INS_MEMORY
             end
 
             // $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
-            file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/input_ins.txt", "r");
+            file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", "r");
             for (i = 0; i < 1000; i = i + 1) 
             begin
                 $fscanf(file, "%h\n", data[i]);
