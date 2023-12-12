@@ -1,12 +1,10 @@
 `include "global.vh"
 
-module RSICV_CPU
-(
-    input wire  [0:0] SYS_clk,
-    input wire  [0:0] SYS_reset
+module RSICV_CPU();
+    reg [0:0] SYS_clk;
+    reg  [0:0] SYS_reset;
 
     //TODO: Kieungan, what is RAM being implemented?
-);
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
@@ -25,6 +23,23 @@ module RSICV_CPU
     wire [4:0] rs1, rs2, REG_write_address;
     wire [0:0] REG_write_enable;
     wire [31:0]REG_write_value, REG_rs1_data, REG_rs2_data;
+
+
+    initial
+    begin //test
+        SYS_reset = 0;
+        #2 SYS_reset = 1;
+        #1 SYS_reset = 0;
+        SYS_clk=0;
+        forever #5 SYS_clk =~ SYS_clk;
+    end 
+
+    initial
+    begin 
+        // test_address_register = 9;
+        // $monitor("time = %d, F_ins = %h, D_ins = %h, EX_ins = %h, WB_ins = %h, D_stall = %b, WB_exception = %b", $time, F_instruction, D_instruction, EX_instruction, WB_instruction, D_stall, WB_exception_signal);
+    end
+
 
     always @(posedge SYS_clk)
     begin
