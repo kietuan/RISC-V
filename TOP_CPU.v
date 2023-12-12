@@ -4,7 +4,8 @@ module RSICV_CPU();
     reg [0:0] SYS_clk;
     reg  [0:0] SYS_reset;
 
-    //TODO: Kieungan, what is RAM being implemented?
+    reg  [4:0]  test_register;
+    wire [31:0] value_need_to_test;
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
@@ -36,8 +37,8 @@ module RSICV_CPU();
 
     initial
     begin 
-        // test_address_register = 9;
-        // $monitor("time = %d, F_ins = %h, D_ins = %h, EX_ins = %h, WB_ins = %h, D_stall = %b, WB_exception = %b", $time, F_instruction, D_instruction, EX_instruction, WB_instruction, D_stall, WB_exception_signal);
+        test_register = 5;
+        $monitor("time = %d, value need to test = %d", $time, value_need_to_test);
     end
 
 
@@ -93,7 +94,10 @@ module RSICV_CPU();
 
 
         .REG_rs1_data       (REG_rs1_data), 
-        .REG_rs2_data       (REG_rs2_data)
+        .REG_rs2_data       (REG_rs2_data),
+
+        .test_register      (test_register),
+        .value_need_to_test (value_need_to_test)
     );
 
     DATA_PATH DATA_PATH
