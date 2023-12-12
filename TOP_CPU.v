@@ -293,7 +293,7 @@ module DATA_PATH
                 endcase
 
                 MEM_write_data      = REG_rs2_data;
-                MEM_write_address   = REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed});
+                MEM_write_address   = REG_rs1_data + $signed({{20{S_immed[11]}} ,S_immed});
             end
 
             7'b1100111: //I- jalr only
