@@ -22,4 +22,4 @@ module INS_MEMORY
         end
     end
 
-endmodule;
+endmodule

@@ -1,7 +1,6 @@
-module RSICV_CPU
-();
-    input wire  [0:0] SYS_clk,
-    input wire  [0:0] SYS_reset
+module RSICV_CPU ();
+    reg         SYS_clk;
+    reg         SYS_reset;
 
     reg  [4:0]  test_register;
     wire [31:0] value_need_to_test;
@@ -27,12 +26,17 @@ module RSICV_CPU
 
     initial
     begin //test
-        SYS_reset = 0;
-        #2 SYS_reset = 1;
-        #1 SYS_reset = 0;
-        SYS_clk=0;
-        forever #5 SYS_clk =~ SYS_clk;
+        SYS_clk         =1;
+
+        forever #0.5 SYS_clk =~ SYS_clk;
     end 
+
+    initial 
+    begin
+        SYS_reset       = 0;
+        #2 SYS_reset    = 1;
+        #3 SYS_reset    = 0;
+    end
 
     initial
     begin 
