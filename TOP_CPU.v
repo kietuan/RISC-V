@@ -46,7 +46,7 @@ module RSICV_CPU();
     begin
         if (SYS_reset)
         begin
-            PC <= `START_INS_ADDRESS;
+            PC <= 0;
         end
         else 
             PC <= new_PC;
