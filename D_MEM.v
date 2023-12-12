@@ -66,7 +66,7 @@ module DATA_MEMORY
         end
 
 
-        file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/input_data.txt", "w");
+        file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/output_data.txt", "w");
         for (i = 0; i < 100; i = i + 1) 
         begin
             $fwrite(file, "%h\n", data[i]);
