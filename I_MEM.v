@@ -16,7 +16,7 @@ module INS_MEMORY
         begin
             for(i=0; i<1000 ;i=i+1)
             begin
-                data[i] <= 0;
+                data[i] = 0;
             end
 
             $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
