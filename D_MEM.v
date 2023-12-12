@@ -14,7 +14,7 @@ module DATA_MEMORY
 
     output reg [31:0] MEM_read_data
 );
-    reg [7:0] data [0 : 1024];
+    reg [7:0] data [0 : 99];
     always @(*) 
     begin
         MEM_read_data[31:0]   = {data[MEM_read_address+3],data[MEM_read_address+2], data[MEM_read_address+1], data[MEM_read_address]};
@@ -36,13 +36,15 @@ module DATA_MEMORY
         end
     end
 
-    integer i;
+    integer i, file;
     always @(posedge SYS_clk) 
     begin
         if (SYS_reset)
         begin
             //TODO Kieungan: initialize the memory in the start of
-            $readmemh("C:/Users/tuankiet/Desktop/RISC-v/input_data.txt", data);
+            // $readmemh("C:/Users/tuankiet/Desktop/RISC-v/input_data.txt", data);
+            for (i = 0; i <= 99; i = i + 1)
+                data [i] = 0;
         end
 
         else if (MEM_write_length == 2'b01) //store 1 byte
@@ -63,6 +65,14 @@ module DATA_MEMORY
             data[MEM_write_address+1] <= MEM_write_data[15:8];
             data[MEM_write_address+0] <= MEM_write_data[7:0];
         end
+
+
+        file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/input_data.txt", "w");
+        for (i = 0; i < 100; i = i + 1) 
+        begin
+            $fwrite(file, "%h\n", data[i]);
+        end
+        $fclose(file);
     end
 
 endmodule
