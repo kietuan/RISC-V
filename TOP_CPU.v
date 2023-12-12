@@ -27,7 +27,6 @@ module RSICV_CPU ();
     initial
     begin //test
         SYS_clk         =1;
-
         forever #0.5 SYS_clk =~ SYS_clk;
     end 
 
@@ -41,7 +40,7 @@ module RSICV_CPU ();
     initial
     begin 
         test_register = 12;
-        $monitor("time = %d, register %d has value = %d", $time, test_register, value_need_to_test);
+        $monitor("time = %d, register %d has value = %d, PC = %d, ins = %h, MEM_write_length = %d, MEM_write_data = %d, MEM_write_address = %d" , $time, test_register, value_need_to_test,PC, instruction, MEM_write_length, MEM_write_data, MEM_write_address);
     end
 
 
