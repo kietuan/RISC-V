@@ -3,9 +3,10 @@ module DATA_MEMORY
     input wire [0:0] SYS_clk,
     input wire [0:0] SYS_reset,
 
-    input wire [1:0]  MEM_write_length,
     input wire [1:0]  MEM_read_length,
     input wire        MEM_read_signed,
+
+    input wire [1:0]  MEM_write_length,
     input wire [31:0] MEM_write_data,
     input wire [31:0] MEM_write_address,
 
@@ -16,9 +17,9 @@ module DATA_MEMORY
     reg [7:0] data [0 : 99];
     always @(*) 
     begin
-        MEM_read_data[31:0]   = {data[MEM_read_address+3],data[MEM_read_address+2], data[MEM_read_address+1], data[MEM_read_address]};
+        MEM_read_data[31:0]   = {data[MEM_read_address+0],data[MEM_read_address+1], data[MEM_read_address+2], data[MEM_read_address+3]};
         
-        if (MEM_read_length == 2'b01)
+        if (MEM_read_length == 2'b01) //read 1 byte
         begin
             if (MEM_read_signed)
                 MEM_read_data = { {24{data[MEM_read_address][7]}}  , data[MEM_read_address]};
@@ -26,12 +27,12 @@ module DATA_MEMORY
                 MEM_read_data = { {24{1'b0}}  , data[MEM_read_address]};
         end
 
-        else if (MEM_read_length == 2'b10)
+        else if (MEM_read_length == 2'b10) //read half word
         begin
             if (MEM_read_signed)
-                MEM_read_data = { {16{data[MEM_read_address + 1][7]}}  , data[MEM_read_address+1], data[MEM_read_address]};
+                MEM_read_data = { {16{data[MEM_read_address + 0][7]}}  , data[MEM_read_address+0], data[MEM_read_address+1]};
             else 
-                MEM_read_data = { {16{1'b0}}  ,                             data[MEM_read_address+1], data[MEM_read_address]};
+                MEM_read_data = { {16{1'b0}}  ,                          data[MEM_read_address+0], data[MEM_read_address+1]};
         end
     end
 
@@ -53,16 +54,16 @@ module DATA_MEMORY
 
         else if (MEM_write_length == 2'b10) //store half-word
         begin
-            data[MEM_write_address+1] <= MEM_write_data[15:8];
-            data[MEM_write_address+0] <= MEM_write_data[7:0];
+            data[MEM_write_address  ] <= MEM_write_data[15:8];
+            data[MEM_write_address+1] <= MEM_write_data[7:0];
         end
 
         else if (MEM_write_length == 2'b11) //store word
         begin
-            data[MEM_write_address+3] <= MEM_write_data[31:24];
-            data[MEM_write_address+2] <= MEM_write_data[23:16];
-            data[MEM_write_address+1] <= MEM_write_data[15:8];
-            data[MEM_write_address+0] <= MEM_write_data[7:0];
+            data[MEM_write_address  ] <= MEM_write_data[31:24];
+            data[MEM_write_address+1] <= MEM_write_data[23:16];
+            data[MEM_write_address+2] <= MEM_write_data[15:8];
+            data[MEM_write_address+3] <= MEM_write_data[7:0];
         end
 
 
