@@ -303,7 +303,7 @@ module DATA_PATH
                 REG_write_enable = 1;
                 REG_write_address= rd;
                 REG_write_value  = PC + 4;
-                new_PC           = (REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed})) << 1 ;
+                new_PC           = (REG_rs1_data + $signed({{20{I_immed[11]}} ,I_immed})) & (32'hFFFF_FFFF - 1) ;
             end
 
             7'b1101111: // J jal only
