@@ -7,7 +7,7 @@ module INS_MEMORY
 
     output wire [31:0]  instruction
 );
-    reg [31:0] data [0 : 1000];
+    reg [31:0] data [(`INS_START_ADDRESS >> 2) : (`INS_START_ADDRESS >> 2) + 1000];
     assign instruction[31:0] = data[PC >> 2];
 
     integer i, file;
@@ -15,7 +15,7 @@ module INS_MEMORY
     begin
         if (SYS_reset)
         begin
-            for(i=0; i<1000 ;i=i+1)
+            for(i=(`INS_START_ADDRESS >> 2); i<(`INS_START_ADDRESS >> 2) + 1000 ;i=i+1)
             begin
                 data[i] = 0;
             end

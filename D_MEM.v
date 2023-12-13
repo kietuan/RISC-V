@@ -1,3 +1,5 @@
+`include "include.v"
+
 module DATA_MEMORY
 (
     input wire [0:0] SYS_clk,
@@ -14,7 +16,7 @@ module DATA_MEMORY
 
     output reg [31:0] MEM_read_data
 );
-    reg [7:0] data [0 : 99];
+    reg [7:0] data [`DATA_START_ADDRESS :`DATA_START_ADDRESS + 99];
     always @(*) 
     begin
         MEM_read_data[31:0]   = {data[MEM_read_address+0],data[MEM_read_address+1], data[MEM_read_address+2], data[MEM_read_address+3]};
@@ -42,7 +44,7 @@ module DATA_MEMORY
         if (SYS_reset)
         begin
             //TODO Kieungan: initialize the memory in the start of
-            for (i = 0; i <= 99; i = i + 1)
+            for (i = `DATA_START_ADDRESS ; i <=`DATA_START_ADDRESS + 99; i = i + 1)
                 data [i] = 0;
             
             `ifdef TESTING
@@ -71,7 +73,7 @@ module DATA_MEMORY
 
         `ifdef TESTING
         file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/test/output_data.txt", "w");
-        for (i = 0; i < 100; i = i + 1) 
+        for (i = `DATA_START_ADDRESS ; i < `DATA_START_ADDRESS + 100; i = i + 1) 
         begin
             $fwrite(file, "%h\n", data[i]);
         end
