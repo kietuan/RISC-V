@@ -1,3 +1,4 @@
+#chuong trinh nay kiem tra tinh dung dan cua sw, lw va beq, neu dung het thi lap vo tan
     addi x3, x0, 10
     sw x3, 5(x0)
     lw x12, 5(x0)
