@@ -1,61 +1,55 @@
-# RISC-V Assembly code to calculate the nth Fibonacci number
-# expect: the return segment has value
-# t0 = x5 has the true value
-.data
-    n:      .word   12      # Value of n (change as needed)
-    result: .word   0       # Variable to store the result
-
-.text
-    # Load the value of n into a register
-    lw      a0, n
-
-    # Call the Fibonacci function
-    jal     ra, fibonacci
-
-exit:
-    # Exit the program
-    li      a7, 10
-    ecall
-
-# Fibonacci function
+        jal x0, main
 fibonacci:
-    # Save registers on the stack
-    addi    sp, sp, -8
-
-    # Base cases: if n is 0 or 1, return n
-    bnez    a0, not_zero
-    li      s0, 0       # n = 0
-    j       fib_done
-
-not_zero:
-    bnez    a0, not_one
-    li      s0, 1       # n = 1
-    j       fib_done
-
-not_one:
-    # Recursive case: Fibonacci(n) = Fibonacci(n-1) + Fibonacci(n-2)
-
-    # Calculate Fibonacci(n-1)
-    addi    a0, a0, -1
-    jal     ra, fibonacci
-    mv      s0, a1      # s0 = Fibonacci(n-1)
-
-    # Calculate Fibonacci(n-2)
-    addi    a0, a0, -1
-    jal     ra, fibonacci
-    mv      s1, a1      # s1 = Fibonacci(n-2)
-
-    # Calculate Fibonacci(n) = Fibonacci(n-1) + Fibonacci(n-2)
-    add     s0, s0, s1
-
-fib_done:
-    # Store the result in the result variable
-    sw      s0, result, s1
-    mv      s0, t0
-    # Restore registers from the stack
-    lw      s0, 4(sp)
-    lw      s1, 0(sp)
-    addi    sp, sp, 8
-
-    # Return from the function
-    jal x0, exit
+        addi    sp,sp,-32
+        sw      ra,28(sp)
+        sw      s0,24(sp)
+        sw      s1,20(sp)
+        addi    s0,sp,32
+        sw      a0,-20(s0)
+        lw      a5,-20(s0)
+        bne     a5,zero,.L2
+        li      a5,0
+        j       .L3
+.L2:
+        lw      a4,-20(s0)
+        li      a5,1
+        bne     a4,a5,.L4
+        li      a5,1
+        j       .L3
+.L4:
+        lw      a5,-20(s0)
+        addi    a5,a5,-1
+        mv      a0,a5
+        call    fibonacci
+        mv      s1,a0
+        lw      a5,-20(s0)
+        addi    a5,a5,-2
+        mv      a0,a5
+        call    fibonacci
+        mv      a5,a0
+        add     a5,s1,a5
+.L3:
+        mv      a0,a5
+        lw      ra,28(sp)
+        lw      s0,24(sp)
+        lw      s1,20(sp)
+        addi    sp,sp,32
+        jr      ra
+main:
+	li sp, 0x10010200
+        addi    sp,sp,-32
+        sw      ra,28(sp)
+        sw      s0,24(sp)
+        addi    s0,sp,32
+        li      a5,12
+        sw      a5,-20(s0)
+        lw      a0,-20(s0)
+        call    fibonacci
+        mv      a5,a0
+        sw      a5,-24(s0)
+        li      a5,0
+        #mv      a0,a5
+        lw      ra,28(sp)
+        lw      s0,24(sp)
+        addi    sp,sp,32
+#the 12-th fibonacci will be in a0 = x10, or in 0x1001001e8
