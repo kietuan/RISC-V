@@ -1,70 +1,55 @@
-	.file	"gcd.c"
-	.option nopic
-	.text
-	.align	2
-	.globl	gcd
-	.type	gcd, @function
+# RISC-V Assembly code to find GCD of two numbers using Euclidean algorithm
+
+.data
+    num1:   .word   36      # First number
+    num2:   .word   48      # Second number
+    result: .word   0       # Variable to store the GCD
+
+.text
+    # Load the two numbers into registers
+    lw      a0, num1
+    lw      a1, num2
+
+    # Call the GCD function
+    jal     ra, gcd
+
+    # Exit the program
+    li      a7, 10
+    ecall
+
+# GCD function
 gcd:
-	addi	sp,sp,-48
-	sw	ra,44(sp)
-	sw	s0,40(sp)
-	addi	s0,sp,48
-	sw	a0,-36(s0)
-	sw	a1,-40(s0)
-	lw	a4,-36(s0)
-	lw	a5,-40(s0)
-	bne	a4,a5,.L2
-	lw	a5,-36(s0)
-	sw	a5,-20(s0)
-	j	.L3
-.L2:
-	lw	a4,-36(s0)
-	lw	a5,-40(s0)
-	ble	a4,a5,.L4
-	lw	a4,-36(s0)
-	lw	a5,-40(s0)
-	sub	a5,a4,a5
-	sw	a5,-36(s0)
-	j	.L5
-.L4:
-	lw	a4,-40(s0)
-	lw	a5,-36(s0)
-	sub	a5,a4,a5
-	sw	a5,-40(s0)
-.L5:
-	lw	a1,-40(s0)
-	lw	a0,-36(s0)
-	call	gcd
-	sw	a0,-20(s0)
-.L3:
-	lw	a5,-20(s0)
-	mv	a0,a5
-	lw	ra,44(sp)
-	lw	s0,40(sp)
-	addi	sp,sp,48
-	jr	ra
-	.size	gcd, .-gcd
-	.align	2
-	.globl	main
-	.type	main, @function
-main:
-	addi	sp,sp,-32
-	sw	ra,28(sp)
-	sw	s0,24(sp)
-	addi	s0,sp,32
-	li	a5,64
-	sw	a5,-20(s0)
-	li	a5,48
-	sw	a5,-24(s0)
-	lw	a1,-24(s0)
-	lw	a0,-20(s0)
-	call	gcd
-	sw	a0,-28(s0)
-	lw	a5,-28(s0)
-	mv	a0,a5
-	lw	ra,28(sp)
-	lw	s0,24(sp)
-	addi	sp,sp,32
-	jr	ra
-	.size	main, .-main
-	.ident	"GCC: (GNU) 7.2.0"
+    # Save registers on the stack
+    addi    sp, sp, -8
+    sw      s0, 4(sp)
+    sw      s1, 0(sp)
+
+    # Initialize variables
+    mv      s0, a0      # s0 = num1
+    mv      s1, a1      # s1 = num2
+
+gcd_loop:
+    # Check if num2 is zero
+    beqz    s1, gcd_done
+
+    # Calculate remainder using the remainder operator
+    rem     s2, s0, s1
+
+    # num1 = num2, num2 = remainder
+    mv      s0, s1
+    mv      s1, s2
+
+    # Repeat the loop
+    j       gcd_loop
+
+gcd_done:
+    # GCD is in s0, store it in the result variable
+    sw      s0, result, t0
+
+    # Restore registers from the stack
+    lw      s0, 4(sp)
+    lw      s1, 0(sp)
+    addi    sp, sp, 8
+
+    # Return from the function
+    #ret
