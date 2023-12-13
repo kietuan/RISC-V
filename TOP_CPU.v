@@ -1,10 +1,9 @@
-module RSICV_CPU
-(
-    input wire  [0:0] SYS_clk,
-    input wire  [0:0] SYS_reset
+module RSICV_CPU ();
+    reg         SYS_clk;
+    reg         SYS_reset;
 
-    //TODO: Kieungan, what is RAM being implemented?
-);
+    reg  [4:0]  test_register;
+    wire [31:0] value_need_to_test;
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
@@ -23,6 +22,30 @@ module RSICV_CPU
     wire [4:0] rs1, rs2, REG_write_address;
     wire [0:0] REG_write_enable;
     wire [31:0]REG_write_value, REG_rs1_data, REG_rs2_data;
+
+
+    initial
+    begin //test
+        SYS_clk         =1;
+        forever #0.5 SYS_clk =~ SYS_clk;
+    end 
+
+    initial 
+    begin
+        SYS_reset       = 0;
+        #2 SYS_reset    = 1;
+        #3 SYS_reset    = 0;
+    end
+
+    initial
+    begin 
+        test_register = 8;
+        // $monitor("time = %d, register %d has value = %d, ins = %b, rs1 = %d, rs2 = %d, S_immed = %b, MEM_write_length = %d, MEM_write_data = %d, MEM_write_address = %d" , $time, test_register, value_need_to_test, instruction, rs1, rs2,  {instruction[31:25], instruction[11:7]},  MEM_write_length, MEM_write_data, MEM_write_address);
+        $monitor("time = %d, register %d has value = %h, ins = %h, PC= %d" , $time, test_register, value_need_to_test, instruction, PC);
+        // $monitor("time = %d, register %d has value = %d, ins = %b, PC= %h, new_PC = %d, REG_rs1_data = %d, I_immed = %b" , $time, test_register, value_need_to_test, instruction, PC, new_PC, REG_rs1_data,instruction[31:20] );
+    end
+
+    initial #50 $finish;
 
     always @(posedge SYS_clk)
     begin
@@ -76,7 +99,10 @@ module RSICV_CPU
 
 
         .REG_rs1_data       (REG_rs1_data), 
-        .REG_rs2_data       (REG_rs2_data)
+        .REG_rs2_data       (REG_rs2_data),
+
+        .test_register      (test_register),
+        .value_need_to_test (value_need_to_test)
     );
 
     DATA_PATH DATA_PATH

@@ -8,18 +8,19 @@ module REGISTER_FILE(
     input [0:0] REG_write_enable, 
     input [31:0]REG_write_value, 
 
-
     output wire [31:0] REG_rs1_data, 
-    output wire [31:0] REG_rs2_data
-);
-    // input [31:0] testt_reg_add,
-    // output [31:0] testt_reg
+    output wire [31:0] REG_rs2_data,
 
+    input [4:0] test_register,
+    output[31:0]value_need_to_test
+);
     reg [31:0] register [0:31];
     integer i;
 
     assign REG_rs1_data = register[rs1];
     assign REG_rs2_data = register[rs2];
+
+    assign value_need_to_test = register[test_register];
 
     always @(posedge SYS_clk)
     begin 
@@ -35,6 +36,4 @@ module REGISTER_FILE(
 
         register[0] <= 0;
     end
-
-    // assign testt_reg = register[testt_reg_add];
 endmodule
