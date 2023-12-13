@@ -1,3 +1,7 @@
+.data
+n: .word 7
+
+.text
         jal x0, main
 fibonacci:
         addi    sp,sp,-32
@@ -36,12 +40,12 @@ fibonacci:
         addi    sp,sp,32
         jr      ra
 main:
-	li sp, 0x10010200
+	li      sp, 0x10010200
         addi    sp,sp,-32
         sw      ra,28(sp)
         sw      s0,24(sp)
         addi    s0,sp,32
-        li      a5,12
+        lw      a5, n
         sw      a5,-20(s0)
         lw      a0,-20(s0)
         call    fibonacci
@@ -52,4 +56,4 @@ main:
         lw      ra,28(sp)
         lw      s0,24(sp)
         addi    sp,sp,32
-#the 12-th fibonacci will be in a0 = x10, or in 0x1001001e8
+#the n-th fibonacci will be in a0 = x10, or in 0x1001001e8
