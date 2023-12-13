@@ -9,8 +9,8 @@ main:
 	beq 	x8, x9, exit
 	mul 	x16, x16, x8
 	add	x8, x8, x10
-	jal     x0, for
+	jal     x2, for
 	exit:		
 	mul 	x16, x16, x9
 	sub	x16, x16, x0
-	jal     x0, main
+	jal     x2, main
