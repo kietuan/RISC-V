@@ -196,6 +196,20 @@ module DATA_PATH
                 endcase
             end
 
+            7'b0110111: //LUI
+            begin
+                REG_write_enable = 1;
+                REG_write_address= rd;
+                REG_write_value = { U_immed[31:12] , {12{0}} };
+            end
+
+            7'b0010111: //AUICPC
+            begin
+                REG_write_enable = 1;
+                REG_write_address= rd;
+                REG_write_value = PC + { U_immed[31:12] , {12{0}} };
+            end
+
             7'b0010011: //I- arthimetic and shift
             begin
                 REG_write_enable = 1;
