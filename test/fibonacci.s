@@ -12,6 +12,7 @@
     # Call the Fibonacci function
     jal     ra, fibonacci
 
+exit:
     # Exit the program
     li      a7, 10
     ecall
@@ -20,8 +21,6 @@
 fibonacci:
     # Save registers on the stack
     addi    sp, sp, -8
-    sw      s0, 4(sp)
-    sw      s1, 0(sp)
 
     # Base cases: if n is 0 or 1, return n
     bnez    a0, not_zero
@@ -59,4 +58,4 @@ fib_done:
     addi    sp, sp, 8
 
     # Return from the function
-    ret
+    jal x0, exit
