@@ -258,9 +258,9 @@ module DATA_PATH
                     3'b000: REG_write_value = $signed(REG_rs1_data) + $signed({{20{I_immed[11]}} ,I_immed});
                     3'b010: REG_write_value = $signed(REG_rs1_data) < $signed({{20{I_immed[11]}} ,I_immed});
                     3'b011: REG_write_value = $unsigned(REG_rs1_data) < $unsigned({{20{0}} ,I_immed});
-                    3'b100: REG_write_value = $unsigned(REG_rs1_data) ^ $unsigned({{20{0}} ,I_immed});
-                    3'b110: REG_write_value = $unsigned(REG_rs1_data) | $unsigned({{20{0}} ,I_immed});
-                    3'b111: REG_write_value = $unsigned(REG_rs1_data) & $unsigned({{20{0}} ,I_immed});
+                    3'b100: REG_write_value = $unsigned(REG_rs1_data) ^ $signed({{20{I_immed[11]}} ,I_immed});
+                    3'b110: REG_write_value = $unsigned(REG_rs1_data) | $signed({{20{I_immed[11]}} ,I_immed});
+                    3'b111: REG_write_value = $unsigned(REG_rs1_data) & $signed({{20{I_immed[11]}} ,I_immed});
                     3'b001: REG_write_value = REG_rs1_data << shamt;
                     3'b101: if (funct7 == 7'd0) 
                                 REG_write_value = REG_rs1_data >> shamt;
