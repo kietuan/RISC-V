@@ -226,7 +226,8 @@ module DATA_PATH
             begin
                 REG_write_enable = 1;
                 REG_write_address= rd;
-                REG_write_value = { U_immed[31:12] , {12{0}} };
+                // REG_write_value = { U_immed[31:12] , {12{0}} }; //replaced
+                REG_write_value = instruction[31:12] << 12;
             end
 
             7'b0010111: //AUICPC
