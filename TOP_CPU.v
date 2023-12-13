@@ -365,7 +365,8 @@ module DATA_PATH
         begin
             REG_write_enable    = 0;
             branch_taken        = 0;
-            new_PC              = PC + 4;
+            MEM_write_length    = 0;
+            new_PC              = PC; //stuck here forever unitil we reset it.
         end
     end
 endmodule
