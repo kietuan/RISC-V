@@ -37,20 +37,20 @@ module RSICV_CPU
 
     initial
     begin //test
-        SYS_clk         =1;
+        SYS_clk         =0;
+        #1 SYS_clk      = 1;
         forever #0.5 SYS_clk =~ SYS_clk;
     end 
 
     initial 
     begin
-        SYS_reset       = 0;
-        #2 SYS_reset    = 1;
-        #3 SYS_reset    = 0;
+        SYS_reset       = 1;
+        #1.1 SYS_reset  = 0;
     end
 
     initial
     begin 
-        test_register = 10;
+        test_register = 8;
         $monitor("time = %d, register %d has value = %d, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
     end
 
