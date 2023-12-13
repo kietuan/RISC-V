@@ -51,9 +51,7 @@ module RSICV_CPU
     initial
     begin 
         test_register = 10;
-        // $monitor("time = %d, register %d has value = %h, ins = %b, rs1 = %d, rs2 = %d, S_immed = %b, MEM_write_length = %d, MEM_write_data = %d, MEM_write_address = %d" , $time, test_register, value_need_to_test, instruction, rs1, rs2,  {instruction[31:25], instruction[11:7]},  MEM_write_length, MEM_write_data, MEM_write_address);
-        $monitor("time = %d, register %d has value = %h, ins = %h, PC= %h" , $time, test_register, value_need_to_test, instruction, PC);
-        // $monitor("time = %d, register %d has value = %d, ins = %b, PC= %h, new_PC = %d, REG_rs1_data = %d, I_immed = %b" , $time, test_register, value_need_to_test, instruction, PC, new_PC, REG_rs1_data,instruction[31:20] );
+        $monitor("time = %d, register %d has value = %h, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
     end
 
     initial #50 $finish;
@@ -248,7 +246,7 @@ module DATA_PATH
             begin
                 REG_write_enable = 1;
                 REG_write_address= rd;
-                REG_write_value = PC + { U_immed[31:12] , {12{0}} };
+                REG_write_value = PC + (instruction[31:12] << 12);
             end
 
             7'b0010011: //I- arthimetic and shift
