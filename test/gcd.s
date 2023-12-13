@@ -1,9 +1,11 @@
 # RISC-V Assembly code to find GCD of two numbers using Euclidean algorithm
+#to verify this program: s0 and result will store the result
+# program stops at ecall.
 
 .data
     num1:   .word   36      # First number
     num2:   .word   48      # Second number
-    result: .word   0       # Variable to store the GCD
+    result: .word   0       # Variable to store the GCD, or s0
 
 .text
     # Load the two numbers into registers
@@ -15,7 +17,7 @@
 
     # Exit the program
     li      a7, 10
-    ecall
+    
 
 # GCD function
 gcd:
@@ -45,11 +47,4 @@ gcd_loop:
 gcd_done:
     # GCD is in s0, store it in the result variable
     sw      s0, result, t0
-
-    # Restore registers from the stack
-    lw      s0, 4(sp)
-    lw      s1, 0(sp)
-    addi    sp, sp, 8
-
-    # Return from the function
-    #ret
+    ecall
