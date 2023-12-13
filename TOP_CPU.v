@@ -50,8 +50,8 @@ module RSICV_CPU
 
     initial
     begin 
-        test_register = 10;
-        $monitor("time = %d, register %d has value = %h, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
+        test_register = 8;
+        $monitor("time = %d, register %d has value = %d, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
     end
 
     initial #50 $finish;
