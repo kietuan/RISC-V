@@ -50,8 +50,8 @@ module RSICV_CPU
 
     initial
     begin 
-        test_register = 10;
-        $monitor("time = %d, register %d has value = %d, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
+        test_register = 6;
+        $monitor("time = %d, register %d has value = %h, ins = %h, PC= %h, REG_write_value = %h" , $time, test_register, value_need_to_test, instruction, PC, REG_write_value);
     end
 
     // initial #400 $finish; //200 cycle
@@ -219,7 +219,7 @@ module DATA_PATH
                     10'b0000000_011: REG_write_value = $unsigned(REG_rs1_data) < $unsigned(REG_rs2_data);//sltu
                     10'b0000000_100: REG_write_value = REG_rs1_data ^ REG_rs2_data;//xor
                     10'b0000000_101: REG_write_value = REG_rs1_data >> REG_rs2_data;//srl
-                    10'b0100000_101: REG_write_value = REG_rs1_data >>> REG_rs2_data;//sra
+                    10'b0100000_101: REG_write_value = $signed(REG_rs1_data) >>> REG_rs2_data;//sra
                     10'b0000000_110: REG_write_value = REG_rs1_data | REG_rs2_data;//or
                     10'b0000000_111: REG_write_value = REG_rs1_data & REG_rs2_data;//and
                     10'b0000001_000: REG_write_value = ($signed(REG_rs1_data) * $signed(REG_rs2_data));//mul, treat them as signed and put the LOWER in result
@@ -265,7 +265,7 @@ module DATA_PATH
                     3'b101: if (funct7 == 7'd0) 
                                 REG_write_value = REG_rs1_data >> shamt;
                             else
-                                REG_write_value = REG_rs1_data >>> shamt;
+                                REG_write_value = $signed(REG_rs1_data) >>> shamt;
                     default: invalid_instruction = 1;
                 endcase
             end
