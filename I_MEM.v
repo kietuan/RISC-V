@@ -1,3 +1,4 @@
+`include "include.v"
 module INS_MEMORY
 (
     input wire [0:0] SYS_clk,
@@ -18,9 +19,10 @@ module INS_MEMORY
             begin
                 data[i] = 0;
             end
-
+            
+            `ifdef TESTING
             $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
-
+            `endif
         end
     end
 

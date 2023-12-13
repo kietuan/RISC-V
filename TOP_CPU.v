@@ -1,9 +1,17 @@
+`include "include.v"
+
+`ifdef TESTING
 module RSICV_CPU ();
     reg         SYS_clk;
     reg         SYS_reset;
+`else
 
-    reg  [4:0]  test_register;
-    wire [31:0] value_need_to_test;
+module RSICV_CPU
+(
+    input wire  [0:0] SYS_clk,
+    input wire  [0:0] SYS_reset
+);
+`endif
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
@@ -23,6 +31,9 @@ module RSICV_CPU ();
     wire [0:0] REG_write_enable;
     wire [31:0]REG_write_value, REG_rs1_data, REG_rs2_data;
 
+`ifdef TESTING
+    reg  [4:0]  test_register;
+    wire [31:0] value_need_to_test;
 
     initial
     begin //test
@@ -46,6 +57,7 @@ module RSICV_CPU ();
     end
 
     initial #50 $finish;
+`endif
 
     always @(posedge SYS_clk)
     begin
@@ -97,12 +109,14 @@ module RSICV_CPU ();
         .REG_write_enable   (REG_write_enable), 
         .REG_write_value    (REG_write_value), 
 
+    `ifdef TESTING
+        .test_register      (test_register),
+        .value_need_to_test (value_need_to_test),
+    `endif
 
         .REG_rs1_data       (REG_rs1_data), 
-        .REG_rs2_data       (REG_rs2_data),
+        .REG_rs2_data       (REG_rs2_data)
 
-        .test_register      (test_register),
-        .value_need_to_test (value_need_to_test)
     );
 
     DATA_PATH DATA_PATH

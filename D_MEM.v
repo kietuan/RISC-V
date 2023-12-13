@@ -44,7 +44,10 @@ module DATA_MEMORY
             //TODO Kieungan: initialize the memory in the start of
             for (i = 0; i <= 99; i = i + 1)
                 data [i] = 0;
+            
+            `ifdef TESTING
             $readmemh("C:/Users/tuankiet/Desktop/RISC-v/input_data.txt", data);
+            `endif
         end
 
         else if (MEM_write_length == 2'b01) //store 1 byte
@@ -66,13 +69,14 @@ module DATA_MEMORY
             data[MEM_write_address+3] <= MEM_write_data[7:0];
         end
 
-
+        `ifdef TESTING
         file = $fopen("C:/Users/tuankiet/Desktop/RISC-V/output_data.txt", "w");
         for (i = 0; i < 100; i = i + 1) 
         begin
             $fwrite(file, "%h\n", data[i]);
         end
         $fclose(file);
+        `endif
     end
 
 endmodule

@@ -1,3 +1,4 @@
+`include "include.v"
 module REGISTER_FILE(
     input       SYS_clk,
     input       SYS_reset,
@@ -8,11 +9,15 @@ module REGISTER_FILE(
     input [0:0] REG_write_enable, 
     input [31:0]REG_write_value, 
 
-    output wire [31:0] REG_rs1_data, 
-    output wire [31:0] REG_rs2_data,
-
+    `ifdef TESTING
     input [4:0] test_register,
-    output[31:0]value_need_to_test
+    output[31:0]value_need_to_test,
+    `endif
+
+    output wire [31:0] REG_rs1_data, 
+    output wire [31:0] REG_rs2_data
+
+
 );
     reg [31:0] register [0:31];
     integer i;
@@ -20,8 +25,10 @@ module REGISTER_FILE(
     assign REG_rs1_data = register[rs1];
     assign REG_rs2_data = register[rs2];
 
+    `ifdef TESTING
     assign value_need_to_test = register[test_register];
-
+    `endif
+    
     always @(posedge SYS_clk)
     begin 
         if (SYS_reset)
