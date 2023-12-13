@@ -223,10 +223,10 @@ module DATA_PATH
                     10'b0000000_110: REG_write_value = REG_rs1_data | REG_rs2_data;//or
                     10'b0000000_111: REG_write_value = REG_rs1_data & REG_rs2_data;//and
 
-                    10'b0000001_000: REG_write_value = ($signed  (REG_rs1_data) * $signed   (REG_rs2_data));//mul, treat them as signed and put the LOWER in result
-                    10'b0000001_001: REG_write_value = ($signed  (REG_rs1_data) * $signed   (REG_rs2_data)) >>> 32;//mulh
-                    10'b0000001_010: REG_write_value = ($signed  (REG_rs1_data) * $unsigned (REG_rs2_data)) >>> 32;//mulhsu
-                    10'b0000001_011: REG_write_value = ($unsigned(REG_rs1_data) * $unsigned (REG_rs2_data)) >> 32;//mulhu
+                    10'b0000001_000: REG_write_value =  REG_rs1_data * REG_rs2_data;//mul, treat them as signed and put the LOWER in result
+                    10'b0000001_001: REG_write_value = ({{32{REG_rs1_data[31]}} , REG_rs1_data} * {{32{REG_rs2_data[31]}} , REG_rs2_data}) >> 32;//mulh
+                    10'b0000001_010: REG_write_value = ({{32{REG_rs1_data[31]}} , REG_rs1_data} * {{32{0}}                , REG_rs2_data}) >> 32;//mulhsu
+                    10'b0000001_011: REG_write_value = ({{32{0}}                , REG_rs1_data} * {{32{0}}                , REG_rs2_data}) >> 32;//mulhu
                     10'b0000001_100: REG_write_value = ($signed  (REG_rs1_data) / $signed   (REG_rs2_data));//div
                     10'b0000001_101: REG_write_value = ($unsigned(REG_rs1_data) / $unsigned (REG_rs2_data));//divu
                     10'b0000001_110: REG_write_value = ($signed  (REG_rs1_data) % $signed   (REG_rs2_data));//rem
