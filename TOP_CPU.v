@@ -41,7 +41,8 @@ module RSICV_CPU ();
     begin 
         test_register = 12;
         // $monitor("time = %d, register %d has value = %d, ins = %b, rs1 = %d, rs2 = %d, S_immed = %b, MEM_write_length = %d, MEM_write_data = %d, MEM_write_address = %d" , $time, test_register, value_need_to_test, instruction, rs1, rs2,  {instruction[31:25], instruction[11:7]},  MEM_write_length, MEM_write_data, MEM_write_address);
-        $monitor("time = %d, register %d has value = %d, ins = %h, PC= %d" , $time, test_register, value_need_to_test, instruction, PC);
+        // $monitor("time = %d, register %d has value = %d, ins = %h, PC= %d" , $time, test_register, value_need_to_test, instruction, PC);
+        $monitor("time = %d, register %d has value = %d, ins = %h, PC= %d, new_PC = %d, REG_rs1_data = %d, I_immed = %b" , $time, test_register, value_need_to_test, instruction, PC, new_PC, REG_rs1_data,I_immed );
     end
 
     initial #50 $finish;
