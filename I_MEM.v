@@ -21,7 +21,7 @@ module INS_MEMORY
             end
             
             `ifdef TESTING
-            $readmemh("C:/Users/tuankiet/Desktop/RISC-V/input_text.txt", data);
+            $readmemh("C:/Users/tuankiet/Desktop/RISC-V/test/input_text.txt", data);
             `endif
         end
     end
