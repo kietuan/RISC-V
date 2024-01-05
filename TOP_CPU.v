@@ -9,13 +9,17 @@ module RSICV_CPU ();
 module RSICV_CPU
 (
     input wire  [0:0] SYS_clk,
-    input wire  [0:0] SYS_reset
+    input wire  [0:0] SYS_reset,
+    input             SYS_start_button,
+    input wire       PC_to_mem_enable,
+    input wire[7:0]  PC_to_mem_data,  
+    input wire[31:0] PC_to_mem_address
 );
 `endif
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
-
+    wire        execution_enable;
     wire [31:0] instruction;
     wire [31:0] new_PC; //need to choose
 
@@ -88,10 +92,15 @@ module RSICV_CPU
         //INPUT
         .SYS_clk            (SYS_clk),
         .SYS_reset          (SYS_reset),
+        .SYS_start_button   (SYS_start_button),
         .PC                 (PC),  
         
         //OUTPUT
-        .instruction        (instruction) //got the instruction
+        .instruction        (instruction), //got the instruction
+        .execution_enable   (execution_enable),
+        .PC_to_mem_enable   (PC_to_mem_enable),
+        .PC_to_mem_data     (PC_to_mem_data),
+        .PC_to_mem_address  (PC_to_mem_address)
     );
 
 
@@ -125,6 +134,7 @@ module RSICV_CPU
         .REG_rs2_data       (REG_rs2_data),
         .MEM_read_data      (MEM_read_data),
         .PC                 (PC),
+        .execution_enable   (execution_enable),
 
         //OUTPUT
         .new_PC             (new_PC),
@@ -154,7 +164,7 @@ module DATA_PATH
     input [31:0] REG_rs2_data,
     input [31:0] MEM_read_data,
     input [31:0] PC,
-
+    input        execution_enable,
 
     output reg [31:0] new_PC,
     output reg [31:0] REG_write_value,
@@ -360,7 +370,7 @@ module DATA_PATH
             default: invalid_instruction = 1;
         endcase
 
-        if (invalid_instruction == 1)
+        if (invalid_instruction == 1 || !execution_enable)
         begin
             REG_write_enable    = 0;
             branch_taken        = 0;

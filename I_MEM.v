@@ -3,12 +3,14 @@ module INS_MEMORY
 (
     input wire [0:0] SYS_clk,
     input wire [0:0] SYS_reset,
+    input            SYS_start_button,
     input  wire [31:0]  PC,
 
     input      PC_to_mem_enable,
     input[7:0] PC_to_mem_data,  
     input[31:0]PC_to_mem_address,
 
+    output reg          execution_enable,
     output wire [31:0]  instruction
 );
     reg [7:0] data [(`INS_START_ADDRESS) : (`INS_START_ADDRESS) + 1000];
@@ -21,9 +23,9 @@ module INS_MEMORY
         begin
             for(i=`INS_START_ADDRESS; i<`INS_START_ADDRESS + 1000 ;i=i+1)
             begin
-                data[i] = 0;
+                data[i] <= 0;
             end
-            
+            execution_enable <= 0;
             `ifdef TESTING
             $readmemh("C:/Users/tuankiet/Desktop/RISC-V/test/input_text.txt", data);
             `endif
@@ -35,6 +37,9 @@ module INS_MEMORY
             begin
                 data[PC_to_mem_address] <= PC_to_mem_data;
             end     
+
+            if (SYS_start_button)
+                execution_enable <= 1;
         end
     end
 
