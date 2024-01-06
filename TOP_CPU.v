@@ -11,15 +11,18 @@ module RSICV_CPU
     input wire  [0:0] SYS_clk,
     input wire  [0:0] SYS_reset,
     input             SYS_start_button,
-    input wire       PC_to_mem_enable,
-    input wire[7:0]  PC_to_mem_data,  
-    input wire[31:0] PC_to_mem_address
+    input wire        PC_data_valid,
+    input wire[7:0]   PC_data,
+    input             transmitter_buffer_full,
+    
+    output            DMEM_transmit_request,
+    output      [7:0] DMEM_data_transmit,
+    output            execution_enable
 );
 `endif
 
     reg  [31:0] PC;
     wire [0:0]  invalid_instruction;
-    wire        execution_enable;
     wire [31:0] instruction;
     wire [31:0] new_PC; //need to choose
 
@@ -34,6 +37,8 @@ module RSICV_CPU
     wire [4:0] rs1, rs2, REG_write_address;
     wire [0:0] REG_write_enable;
     wire [31:0]REG_write_value, REG_rs1_data, REG_rs2_data;
+
+    wire       CPU_finish_execution = execution_enable && invalid_instruction;
 
 `ifdef TESTING
     reg  [4:0]  test_register;
@@ -73,18 +78,21 @@ module RSICV_CPU
 
     DATA_MEMORY DMEM //the block hold the insrtuciton and data. It can be read every time and written at the clock. once
     (
-        .SYS_clk            (SYS_clk),
-        .SYS_reset          (SYS_reset),
+        .SYS_clk                 (SYS_clk),
+        .SYS_reset               (SYS_reset),
         //INPUT
-        .MEM_write_length  (MEM_write_length),
-        .MEM_read_length   (MEM_read_length),
-        .MEM_read_signed   (MEM_read_signed),
-        .MEM_write_data    (MEM_write_data),
-        .MEM_write_address (MEM_write_address),
-        .MEM_read_address  (MEM_read_address),
-        
+        .MEM_write_length        (MEM_write_length),
+        .MEM_read_length         (MEM_read_length),
+        .MEM_read_signed         (MEM_read_signed),
+        .MEM_write_data          (MEM_write_data),
+        .MEM_write_address       (MEM_write_address),
+        .MEM_read_address        (MEM_read_address),
+        .CPU_finish_execution    (CPU_finish_execution),
+        .transmitter_buffer_full (transmitter_buffer_full),
         //OUTPUT
-        .MEM_read_data      (MEM_read_data)
+        .DMEM_transmit_request   (DMEM_transmit_request),
+        .DMEM_data_transmit      (DMEM_data_transmit),
+        .MEM_read_data           (MEM_read_data)
     );
     
     INS_MEMORY  IMEM
@@ -98,9 +106,8 @@ module RSICV_CPU
         //OUTPUT
         .instruction        (instruction), //got the instruction
         .execution_enable   (execution_enable),
-        .PC_to_mem_enable   (PC_to_mem_enable),
-        .PC_to_mem_data     (PC_to_mem_data),
-        .PC_to_mem_address  (PC_to_mem_address)
+        .PC_data_valid      (PC_data_valid),
+        .PC_data            (PC_data)
     );
 
 
@@ -142,9 +149,9 @@ module RSICV_CPU
         .REG_write_enable   (REG_write_enable),
         .REG_write_address  (REG_write_address),
 
-        .MEM_write_length  (MEM_write_length),
-        .MEM_read_length   (MEM_read_length),
-        .MEM_read_signed   (MEM_read_signed),
+        .MEM_write_length   (MEM_write_length),
+        .MEM_read_length    (MEM_read_length),
+        .MEM_read_signed    (MEM_read_signed),
         .MEM_write_data     (MEM_write_data),
         .MEM_write_address  (MEM_write_address),
 

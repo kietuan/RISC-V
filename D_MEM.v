@@ -2,8 +2,8 @@
 
 module DATA_MEMORY
 (
-    input wire [0:0] SYS_clk,
-    input wire [0:0] SYS_reset,
+    input wire [0:0]  SYS_clk,
+    input wire [0:0]  SYS_reset,
 
     input wire [1:0]  MEM_read_length,
     input wire        MEM_read_signed,
@@ -12,11 +12,23 @@ module DATA_MEMORY
     input wire [31:0] MEM_write_data,
     input wire [31:0] MEM_write_address,
 
-    input wire [31:0]  MEM_read_address,
+    input wire [31:0] MEM_read_address,
+
+    input             CPU_finish_execution, 
+    input             transmitter_buffer_full,
+
+    output            DMEM_transmit_request,
+    output      [7:0] DMEM_data_transmit,
 
     output reg [31:0] MEM_read_data
 );
     reg [7:0] data [`DATA_START_ADDRESS :`DATA_END_ADDRESS];
+    
+    reg [31:0]DMEM_transmit_address;
+
+    assign DMEM_data_transmit    = data [DMEM_transmit_address];
+    assign DMEM_transmit_request = CPU_finish_execution && (`DATA_START_ADDRESS <= DMEM_transmit_address) && (DMEM_transmit_address <= `DATA_END_ADDRESS);
+
     always @(*) 
     begin
         MEM_read_data[31:0]   = {data[MEM_read_address+0],data[MEM_read_address+1], data[MEM_read_address+2], data[MEM_read_address+3]};
@@ -46,7 +58,7 @@ module DATA_MEMORY
             //TODO Kieungan: initialize the memory in the start of
             for (i = `DATA_START_ADDRESS ; i <=`DATA_END_ADDRESS; i = i + 1)
                 data [i] = 0;
-            
+
             `ifdef TESTING
             $readmemh("C:/Users/tuankiet/Desktop/RISC-v/test/input_data.txt", data);
             `endif
@@ -79,6 +91,15 @@ module DATA_MEMORY
         end
         $fclose(file);
         `endif
+    end
+
+    always @(posedge SYS_clk) 
+    begin
+        if       (SYS_reset)
+            DMEM_transmit_address <= `DATA_START_ADDRESS;
+
+        else if ((DMEM_transmit_request) && (!transmitter_buffer_full))
+            DMEM_transmit_address <= DMEM_transmit_address + 1;
     end
 
 endmodule
