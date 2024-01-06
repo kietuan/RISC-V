@@ -1,12 +1,12 @@
 `include "include.v"
 
 `ifdef TESTING
-module RSICV_CPU ();
+module RISCV_CPU ();
     reg         SYS_clk;
     reg         SYS_reset;
 `else
 
-module RSICV_CPU
+module RISCV_CPU
 (
     input wire  [0:0] SYS_clk,
     input wire  [0:0] SYS_reset,
